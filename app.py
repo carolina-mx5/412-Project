@@ -1,17 +1,18 @@
-from flask import Flask, render_template
-import psycopg2
+#imports
 import os
+import psycopg2
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
-# Database connection settings
+# Database connection
 DB_NAME = os.getenv("DB_NAME", "movierec")
-DB_USER = os.getenv("DB_USER", "carolina")  # change if your PG username is different
-DB_PASSWORD = os.getenv("DB_PASSWORD", "")  # set via env var if you use a password
-DB_HOST = os.getenv("DB_HOST", "/tmp")      # matches your PGHOST for class
-DB_PORT = os.getenv("DB_PORT", "8888")      # matches your PGPORT for class
+DB_USER = os.getenv("DB_USER", "carolina") 
+DB_PASSWORD = os.getenv("DB_PASSWORD", "") 
+DB_HOST = os.getenv("DB_HOST", "/tmp")      
+DB_PORT = os.getenv("DB_PORT", "8888")      
 
-
+#connect to database
 def get_db_connection():
     conn = psycopg2.connect(
         dbname=DB_NAME,
