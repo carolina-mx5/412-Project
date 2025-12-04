@@ -6,26 +6,248 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-  <h1>Movies</h1>
+  <h1>Movie Recommendations</h1>
+  <!-- GENRE SECTION -->
+<section>
+    <h2>Search by Genre</h2>
+  
+    <form method="POST" class="genre-form">
+      <label for="genre_id">Select a genre:</label>
+      <select name="genre_id" id="genre_id" required>
+        <option value="" disabled {% if not selected_genre_id %}selected{% endif %}>
+          -- Choose a genre --
+        </option>
+        {% for g in genres %}
+          <option value="{{ g[0] }}"
+            {% if selected_genre_id and selected_genre_id == g[0] %}selected{% endif %}>
+            {{ g[1] }}
+          </option>
+        {% endfor %}
+      </select>
+      <button type="submit" name="submit_genre" value="1">Show Titles</button>
+    </form>
+  
+    {% if selected_genre_name %}
+      <h3>Results for "{{ selected_genre_name }}"</h3>
+  
+      {% if movies_by_genre %}
+        <h4>Movies</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Release Year</th>
+              <th>Rating</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for m in movies_by_genre %}
+              <tr>
+                <td>{{ m[1] }}</td>  <!-- m_title -->
+                <td>{{ m[2] }}</td>  <!-- m_releaseYear -->
+                <td>{{ m[3] }}</td>  <!-- m_rating -->
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
+  
+      {% if shows_by_genre %}
+        <h4>TV Shows</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Release Year</th>
+              <th>Seasons</th>
+              <th>Rating</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in shows_by_genre %}
+              <tr>
+                <td>{{ s[1] }}</td>  <!-- s_title -->
+                <td>{{ s[2] }}</td>  <!-- s_releaseYear -->
+                <td>{{ s[3] }}</td>  <!-- s_duration (seasons) -->
+                <td>{{ s[4] }}</td>  <!-- s_rating -->
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
+  
+      {% if not movies_by_genre and not shows_by_genre %}
+        <p>No movies or shows found for this genre.</p>
+      {% endif %}
+    {% endif %}
+  </section>
+  
+  <hr>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Release Year</th>
-        <th>Rating</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for m in movies %}
-        <tr>
-          <td>{{ m[1] }}</td>
-          <td>{{ m[2] }}</td>
-          <td>{{ m[3] }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <!-- ACTOR SECTION -->
+  <section>
+    <h2>Search by Actor</h2>
+
+    <form method="POST" class="genre-form">
+      <label for="actor_id">Select an actor:</label>
+      <select name="actor_id" id="actor_id" required>
+        <option value="" disabled {% if not selected_actor_id %}selected{% endif %}>
+          -- Choose an actor --
+        </option>
+        {% for a in actors %}
+          <option value="{{ a[0] }}"
+            {% if selected_actor_id and selected_actor_id == a[0] %}selected{% endif %}>
+            {{ a[1] }} {{ a[2] }}
+          </option>
+        {% endfor %}
+      </select>
+      <button type="submit" name="submit_actor" value="1">Show Credits</button>
+    </form>
+
+    {% if selected_actor_name %}
+      <h3>Movies with {{ selected_actor_name }}</h3>
+
+      {% if movies_by_actor %}
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Release Year</th>
+              <th>Rating</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for m in movies_by_actor %}
+              <tr>
+                <td>{{ m[1] }}</td>  <!-- m_title -->
+                <td>{{ m[2] }}</td>  <!-- m_releaseYear -->
+                <td>{{ m[3] }}</td>  <!-- m_rating -->
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>No movies found for this actor.</p>
+      {% endif %}
+
+      <h3>Shows with {{ selected_actor_name }}</h3>
+
+      {% if shows_by_actor %}
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Release Year</th>
+              <th>Seasons</th>
+              <th>Rating</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in shows_by_actor %}
+              <tr>
+                <td>{{ s[1] }}</td>  <!-- s_title -->
+                <td>{{ s[2] }}</td>  <!-- s_releaseYear -->
+                <td>{{ s[3] }}</td>  <!-- s_duration (seasons) -->
+                <td>{{ s[4] }}</td>  <!-- s_rating -->
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>No shows found for this actor.</p>
+      {% endif %}
+    {% endif %}
+  </section>
+
+  <hr>
+
+<!-- RATING SECTION -->
+<section>
+  <h2>Search by Rating</h2>
+
+  <form method="POST" class="genre-form">
+    <label for="min_rating">Min rating:</label>
+    <input
+      type="number"
+      name="min_rating"
+      id="min_rating"
+      step="0.5"
+      min="1"
+      max="5"
+      value="{{ selected_min_rating or '' }}"
+      required
+    >
+
+    <label for="max_rating">Max rating:</label>
+    <input
+      type="number"
+      name="max_rating"
+      id="max_rating"
+      step="0.5"
+      min="1"
+      max="5"
+      value="{{ selected_max_rating or '' }}"
+      required
+    >
+
+    <button type="submit" name="submit_rating" value="1">Find Titles</button>
+  </form>
+
+  {% if selected_min_rating and selected_max_rating %}
+    <h3>Results with rating between {{ selected_min_rating }} and {{ selected_max_rating }}</h3>
+
+    {% if movies_by_rating %}
+      <h4>Movies</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Release Year</th>
+            <th>Rating</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in movies_by_rating %}
+            <tr>
+              <td>{{ m[1] }}</td>  <!-- m_title -->
+              <td>{{ m[2] }}</td>  <!-- m_releaseYear -->
+              <td>{{ m[3] }}</td>  <!-- m_rating -->
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+
+    {% if shows_by_rating %}
+      <h4>TV Shows</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Release Year</th>
+            <th>Seasons</th>
+            <th>Rating</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in shows_by_rating %}
+            <tr>
+              <td>{{ s[1] }}</td>  <!-- s_title -->
+              <td>{{ s[2] }}</td>  <!-- s_releaseYear -->
+              <td>{{ s[3] }}</td>  <!-- s_duration -->
+              <td>{{ s[4] }}</td>  <!-- s_rating -->
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+
+    {% if not movies_by_rating and not shows_by_rating %}
+      <p>No movies or shows found in this rating range.</p>
+    {% endif %}
+  {% endif %}
+</section>
+
 
 </body>
 </html>
