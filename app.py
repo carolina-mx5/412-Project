@@ -1,3 +1,4 @@
+#imports
 from flask import Flask, render_template, request
 import psycopg2
 import os
@@ -8,12 +9,12 @@ app = Flask(__name__)
 DB_NAME = os.getenv("DB_NAME", "movierec")
 DB_USER = os.getenv("DB_USER", "carolina")  
 DB_PASSWORD = os.getenv("DB_PASSWORD", "")  
-DB_HOST = os.getenv("DB_HOST", "/tmp")      # matches your PGHOST
-DB_PORT = os.getenv("DB_PORT", "8888")      # matches your PGPORT
+DB_HOST = os.getenv("DB_HOST", "/tmp")     
+DB_PORT = os.getenv("DB_PORT", "8888")      
 
 
 def get_db_connection():
-    """Create and return a new DB connection."""
+    #db connections
     return psycopg2.connect(
         dbname=DB_NAME,
         user=DB_USER,
@@ -34,7 +35,7 @@ def index():
     conn = get_db_connection()
     cur = conn.cursor()
 
-    # Gengres for first dropdown
+    # Genres for first dropdown
     cur.execute("""
         SELECT g_id, g_name
         FROM tables.genre
@@ -201,12 +202,14 @@ def index():
         shows_by_genre=shows_by_genre,
         selected_genre_id=int(selected_genre_id) if selected_genre_id else None,
         selected_genre_name=selected_genre_name,
+        
         # actor data
         actors=actors,
         movies_by_actor=movies_by_actor,
         shows_by_actor=shows_by_actor,
         selected_actor_id=int(selected_actor_id) if selected_actor_id else None,
         selected_actor_name=selected_actor_name,
+        
         # rating data
         movies_by_rating=movies_by_rating,
         shows_by_rating=shows_by_rating,
