@@ -8,8 +8,8 @@ app = Flask(__name__)
 DB_NAME = os.getenv("DB_NAME", "movierec")
 DB_USER = os.getenv("DB_USER", "carolina")  
 DB_PASSWORD = os.getenv("DB_PASSWORD", "")  
-DB_HOST = os.getenv("DB_HOST", "/tmp")      # matches your PGHOST
-DB_PORT = os.getenv("DB_PORT", "8888")      # matches your PGPORT
+DB_HOST = os.getenv("DB_HOST", "/tmp")    
+DB_PORT = os.getenv("DB_PORT", "8888")    
 
 
 def get_db_connection():
